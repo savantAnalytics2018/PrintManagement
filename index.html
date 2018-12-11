@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../../../favicon.ico">
+    <link rel="icon" href="https://assets-cdn.github.com/favicon.ico">
 
     <title>Dashboard Template for Bootstrap</title>
 
@@ -104,19 +104,19 @@
 
   <body> <div id="app">
     
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand bg-dark  col-sm-3 col-md-2 mr-0" href="#">Company name</a>
+      <!--<input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">-->
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Sign out</a>
+          <a class="nav-link " href="#">Sign out</a>
         </li>
       </ul>
     </nav>
 
     <div class="container-fluid">
       <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block bg-dark text-light sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <!--<li class="nav-item">
@@ -126,10 +126,7 @@
                 </a>
               </li>-->
               <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <span data-feather="file"></span>
-                  Documents
-                </a>
+                <router-link class="nav-link activ text-light" to="/documents"><span data-feather="file"></span> Documents</router-link>
               </li>
               <!--<li class="nav-item">
                 <a class="nav-link" href="#">
@@ -159,76 +156,44 @@
 
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
               <span>Admin</span>
-              <a class="d-flex align-items-center text-muted" href="#">
-                <span data-feather="plus-circle"></span>
-              </a>
+              <!--<a class="d-flex align-items-center text-muted" href="#">-->
+              <!--  <span data-feather="plus-circle"></span>-->
+              <!--</a>-->
             </h6>
+            
             <ul class="nav flex-column mb-2">
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="bar-chart-2"></span>
-                  Downloads per User
-                </a>
-              </li>
-              <!--<li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Last quarter
-                </a>
+                <router-link class="nav-link text-light" to="/admin-logs"><span data-feather="bar-chart-2"></span> Download Log</router-link>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Social engagement
-                </a>
+                <router-link class="nav-link text-light" to="/admin-users"><span data-feather="users"></span> User Rights</router-link>
               </li>
+            </lu>
+            
+            
+            
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Authentication</span>
+              <!--<a class="d-flex align-items-center text-muted" href="#">-->
+              <!--  <span data-feather="plus-circle"></span>-->
+              <!--</a>-->
+            </h6>
+            
+            <ul class="nav flex-column mb-2">
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Year-end sale
-                </a>
-              </li>-->
-            </ul>
+                <!--<router-link class="nav-link text-light" to="/signin"><span data-feather="log-in"></span> Sign-In</router-link>-->
+                <a class="nav-link text-light" href="signin.html"><span data-feather="log-in"></span> Sign-In</a>
+              </li>
+              <!--<li class="nav-item">-->
+              <!--  <router-link class="nav-link text-light" to="/account"><span data-feather="user-check"></span> Account</router-link>-->
+              <!--</li>-->
           </div>
         </nav>
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-          
-          <div class="pt-3 pb-2 mb-3 border-botto">
-            <h2>Documents</h2>
-          </div>
-          
-          
-          <div class="table-responsive">
-            <table class="table table-striped ">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(v,i) in myDocs">
-                  <td>{{i}}</td>
-                  <td><a class="doc" :href="v">{{v}}</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          
-          
-          <section class="mt-5" style="display:none">
-            
-            <h5>[TESTS] Account information</h5>
-            <div id="sign-in-status"></div>
-            <div id="sign-in"></div>
-            <div id="account-details"></div>
-    
-          </section>
-    
-    
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-5 my-5">
+          <router-view></router-view>
         </main>
+        
       </div>
     </div>
   </div> <!--#APP-->
@@ -239,7 +204,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     
     <!--Vuejs-->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.min.js"></script>
     
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
@@ -253,12 +220,18 @@
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <!-- Add additional services that you want to use -->
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
-    <!--<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-database.js"></script>-->
-    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-database.js"></script>
+    <!--<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>-->
     <!--<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-messaging.js"></script>-->
     <!--<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>-->
     
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.js"></script>
     
+    <script type="text/javascript" src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
+    
+    
+    <!--AUTHENTICATION-------------------------------------------------------->
     <script>
       var config = {
         apiKey: "AIzaSyAry9o4GVyxglmiIR4AiELF73NR4xZfPQw",
@@ -269,11 +242,16 @@
         messagingSenderId: "15834607829"
       };
       firebase.initializeApp(config);
-    </script>
-    
-    <!-- Firebaseui-web -->
-    <script src="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.js"></script>
-    <script type="text/javascript">
+      
+      // var db = firebase.firestore();
+      var DATABASE = firebase.database();
+      
+      var DOWNLOADS = DATABASE.ref('downloads');
+      var PERMISSIONS = DATABASE.ref('permissions');
+      
+      
+      // console.log(DOWNLOADS)
+      
       // // FirebaseUI config.
       // var uiConfig = {
       //   signInSuccessUrl: 'index.html',
@@ -301,40 +279,42 @@
       // var ui = new firebaseui.auth.AuthUI(firebase.auth());
       // // The start method will wait until the DOM is loaded.
       // ui.start('#firebaseui-auth-container', uiConfig);
-    </script>
-    
-    
-    <script type="text/javascript">
+      
+      var UserEmail;
+      
       initApp = function() {
         firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
             // User is signed in.
             var displayName = user.displayName;
             var email = user.email;
+            UserEmail = user.email;
             var emailVerified = user.emailVerified;
             var photoURL = user.photoURL;
             var uid = user.uid;
             var phoneNumber = user.phoneNumber;
             var providerData = user.providerData;
-            user.getIdToken().then(function(accessToken) {
-              document.getElementById('sign-in-status').textContent = 'Signed in';
-              document.getElementById('sign-in').textContent = 'Sign out';
-              document.getElementById('account-details').textContent = JSON.stringify({
-                displayName: displayName,
-                email: email,
-                emailVerified: emailVerified,
-                phoneNumber: phoneNumber,
-                photoURL: photoURL,
-                uid: uid,
-                accessToken: accessToken,
-                providerData: providerData
-              }, null, '  ');
-            });
+            
+            // user.getIdToken().then(function(accessToken) {
+            //   // document.getElementById('sign-in-status').textContent = 'Signed in';
+            //   // document.getElementById('sign-in').textContent = 'Sign out';
+            //   console.log(JSON.stringify({
+            //       displayName: displayName,
+            //       email: email,
+            //       emailVerified: emailVerified,
+            //       phoneNumber: phoneNumber,
+            //       photoURL: photoURL,
+            //       uid: uid,
+            //       accessToken: accessToken,
+            //       providerData: providerData
+            //     }, null, '  ')
+            //   )
+            // });
           } else {
             // User is signed out.
-            document.getElementById('sign-in-status').textContent = 'Signed out';
-            document.getElementById('sign-in').textContent = 'Sign in';
-            document.getElementById('account-details').textContent = 'null';
+            // document.getElementById('sign-in-status').textContent = 'Signed out';
+            // document.getElementById('sign-in').textContent = 'Sign in';
+            // document.getElementById('account-details').textContent = 'null';
           }
         }, function(error) {
           console.log(error);
@@ -346,13 +326,159 @@
       });
     </script>
     
+    <!-- VUE JS ------------------------------------------------------------>
     <script>
+      
+      const componentDocs = {
+        template: `
+          <div> <h2>Documents</h2>
+            
+            <div class="table-responsive">
+              <table class="table table-striped ">
+                <thead>
+                  <tr>
+                    <!--th>#</th-->
+                    <th>Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(v,i) in $root.myDocs">
+                    <!--td>{{i}}</td-->
+                    <td><a class="doc" :href="v">{{v}}</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>`,
+      // 	data() { return { title: 'ggggggggggg' } }
+      };
+      
+      const componentAdminUsers = {
+        template: `<div>
+            <h2>Users</h2>
+            <div class="table-responsive">
+              <table class="table table-striped ">
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Permissions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                  <tr> <td></td> <td></td> </tr>
+                  <tr> <td></td> <td></td> </tr>
+                  <tr> <td></td> <td></td> </tr>
+                  <tr> <td></td> <td></td> </tr>
+                  <tr> <td></td> <td></td> </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>`,
+      };
+      
+      const componentAdminLogs = {
+        template: `<div> 
+            <h2>Download Logs</h2>
+            <div class="table-responsive">
+              <table class="table table-striped ">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Filename</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                  <tr v-for="(v,i) in downloads">
+                    <td>{{v.time}}</td>
+                    <td>{{v.user}}</td>
+                    <td>{{v.doc}}</td>
+                    <td><button class="btn btn-sm btn-danger">Delete</button></td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>`,
+      	  data() { return { 
+      	    title: 'ggggggggggg' ,
+      	    downloads: []
+      	  } },
+          mounted: function () { // https://firebase.google.com/docs/database/web/read-and-write?authuser=0
+            var that=this;
+            console.log('componentAdminLogs mounted');
+            
+            // DOWNLOADS.child('CgTK6pLWp4fuYoifz0eB').once('value').then(function(snapshot) {
+            //   console.log('snapshot.val()',snapshot.val());
+            // });
+            
+            // /// THIS IS DATABASE, not firestore
+            // DOWNLOADS = .ref('downloads');
+            // DOWNLOADS = firebase.database().ref('downloads/CgTK6pLWp4fuYoifz0eB');
+            DOWNLOADS.once('value').then(function(snapshot) {
+              console.log('snapshot.val()', snapshot.val());
+              Object.keys(snapshot.val()).forEach(function(d,i){
+                var val = snapshot.val()[d];
+                console.log(val)
+                that.downloads.push(val)
+              })
+            });
+            
+            
+            
+            // DOWNLOADS.on('value', function(snapshot) {
+            //     console.log('snapshot')
+            //     console.log(snapshot)
+            //     console.log('snapshot.val()', snapshot.val());
+            //   });
+          }
+      };
+      
+      const componentAccount = {
+        template: `<div> 
+            <h2>Account</h2>
+            <div id="sign-in-status"></div>
+            <div id="sign-in"></div>
+            <div id="account-details"></div>
+          </div>`,
+      };
+      const componentSignin = {
+        template: `
+          <div class="container h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+              <div id="firebaseui-auth-container"></div>  
+            </div>
+          </div>`,
+      };
+      
+      
+      const routes = [
+        // { path: '/foo', component: Foo },
+        // { path: '/bar', component: Bar },
+        { path: '/documents', alias: 'docs', component: componentDocs },
+        { path: '/admin-logs', alias: 'logs', component: componentAdminLogs },
+        { path: '/admin-users', alias: 'users', component: componentAdminUsers },
+        { path: '/signin', alias: 'signup', component: componentSignin },
+        { path: '/account', alias: 'a', component: componentAccount },
+      ]
+      
+      const router = new VueRouter({
+        routes // short for `routes: routes`
+      })
+
+
+
+      
       var app = new Vue({
-        el: '#app',
+        router,
         data: {
-          message: 'Hello Vue!'
-          ,myDocs: [
-            'docs/Příloha.pdf'
+          myDocs: [
+            'docs/measles.pdf'
             ,'docs/rubella.pdf'
             ,'docs/smallpox.pdf'
             // ,'https://firebasestorage.googleapis.com/v0/b/saif-pdfs.appspot.com/o/example1.pdf?alt=media&token=0f9bd0bd-78c0-4a70-b078-11a1aef3edd7'
@@ -360,12 +486,20 @@
             // ,'example4.pdf'
           ]
         }
-      })
+      }).$mount('#app')
+      
+      // var app = new Vue({
+      //   el: '#app',
+      // })
     </script>
     
+    
+    
+    
+    
+    
+    
     <!--pdf-lib-->
-    <script type="text/javascript" src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
     <script>
       var PDFDocumentFactory = PDFLib.PDFDocumentFactory;
       var PDFDocumentWriter = PDFLib.PDFDocumentWriter;
@@ -380,8 +514,7 @@
           // console.log(event.target.href);
           console.log("user clicked doc link");
           
-          // file = 'docs/example1.pdf';
-          file = event.target.href;
+          file = event.target.href; // e.g. file = 'docs/example1.pdf';
           fetch(file) .then(
             function(response) {
               console.log('Fetched!');
@@ -404,14 +537,18 @@
                     size: 16,
                     font: 'Helvetica',
                     colorRgb: [0.95, 0.26, 0.21],
-                  }),
+                  })//,
                 );
                 
                 page.addContentStreams(pdfDoc.register(contentStream));
                 const pdfBytes = PDFDocumentWriter.saveToBytes(pdfDoc);
                 
+                // LOG that in firebase
+                DOWNLOADS.push({user: UserEmail, time: (new Date()).toISOString().slice(0, 19).replace('T', ' '), doc: file.split('docs/')[1]})
+                
                 // console.log(pdfBytes)
                 download( pdfBytes, "textUInt8Array.pdf", "text/plain" );
+                // ANALYTICS.child('perPage').child(page).child(login).set(timestamp);
                 
               });
             }
