@@ -227,7 +227,8 @@
     
     <script src="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.js"></script>
     
-    <script type="text/javascript" src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-populate@1.17.0/browser/xlsx-populate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
     
     
@@ -342,7 +343,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(v,i) in $root.myDocs">
+                  <tr v-for="(v,i) in myDocs">
                     <!--td>{{i}}</td-->
                     <td><a class="doc" :href="v">{{v}}</a></td>
                   </tr>
@@ -351,7 +352,159 @@
             </div>
 
           </div>`,
-      // 	data() { return { title: 'ggggggggggg' } }
+      	data() { return { 
+          myDocs: [
+            'docs/measles.pdf'
+            ,'docs/rubella.pdf'
+            ,'docs/smallpox.pdf'
+            ,'docs/QA/test1.xlsx'
+            ,'docs/QA/AcetonForm.xlsx'
+            ,'docs/QC/example1.pdf'
+            // ,'https://firebasestorage.googleapis.com/v0/b/saif-pdfs.appspot.com/o/example1.pdf?alt=media&token=0f9bd0bd-78c0-4a70-b078-11a1aef3edd7'
+            // ,'https://firebasestorage.googleapis.com/v0/b/saif-pdfs.appspot.com/o/P%C5%99%C3%ADloha%20%C4%8D%202%20Formul%C3%A1%C5%99%20Troxerutin_R_INS_HPLC_verze_2_636791827515652480.pdf?alt=media&token=f796a8dd-a983-4dc5-a6eb-b351bc7ef11b'
+            // ,'example4.pdf'
+          ],
+        }},
+      	mounted: function(){
+      	 // var fontColor = ;
+      	  
+      	  
+      	  /// PDF-LIB -------------------------------------------
+          var PDFDocumentFactory = PDFLib.PDFDocumentFactory;
+          var PDFDocumentWriter = PDFLib.PDFDocumentWriter;
+          var drawText = PDFLib.drawText;
+          
+          // ADD TPDF TIMESTAMP
+          $(document).ready(function(){
+            $("a.doc").click(function(event){
+              event.preventDefault();
+              // console.log(event.target.href);
+              console.log("user clicked doc link");
+              fileName = event.target.href; // e.g. fileName = 'docs/example1.pdf';
+              
+              if(fileName.indexOf('.pdf')>-1){
+                console.log('its a pdf');
+                fetch(fileName).then(
+                  function(response) {
+                    response.arrayBuffer().then(function(buffer) {
+                      // console.log(buffer)
+                      // console.log(buffer[""[[Uint8Array]]""])
+                      const existingPdfDocBytes = new Uint8Array(buffer)
+                      const pdfDoc = PDFDocumentFactory.load(existingPdfDocBytes);
+                      const [helveticaFont] = pdfDoc.embedStandardFont('Helvetica');
+                      
+                      const pages = pdfDoc.getPages();
+                      const page  = pages[0];
+                      
+                      page.addFontDictionary('Helvetica', helveticaFont);
+                      
+                      const contentStream = pdfDoc.createContentStream(
+                        drawText( 'form1 : ' + (new Date()).toISOString().slice(0, 19) , {
+                          x: 200,
+                          y: 800,
+                          size: 16,
+                          font: 'Helvetica',
+                          colorRgb: [0.95, 0.26, 0.21],
+                        })//,
+                      );
+                      
+                      page.addContentStreams(pdfDoc.register(contentStream));
+                      const pdfBytes = PDFDocumentWriter.saveToBytes(pdfDoc);
+                      
+                      // LOG that in firebase
+                      DOWNLOADS.push({user: UserEmail, time: (new Date()).toISOString().slice(0, 19).replace('T', ' '), doc: 'docs/'+fileName.split('docs/')[1]})
+                      
+                      // console.log(pdfBytes)
+                      download( pdfBytes, fileName.split('/').pop(), "text/plain" );
+  
+                    });
+                  }
+                ).catch(function(err) {
+                  console.log('Fetch Error :-S', err);
+                });
+              } else if(fileName.indexOf('.xlsx')){   // xlsx-populate -----------------------------------------
+                console.log('its an EXCEL');
+                
+                // Promise is not defined in IE so xlsx-populate uses a polyfill via JSZip.
+                var Promise = XlsxPopulate.Promise;
+                var radioBlank = document.getElementById("radio-blank");
+                var radioAjax = document.getElementById("radio-ajax");
+                var radioLocal = document.getElementById("radio-local");
+                var urlInput = document.getElementById("url-input");
+                var fileInput = document.getElementById("file-input");
+                function getWorkbook() {
+                    // if (radioBlank.checked) {
+                    //     return XlsxPopulate.fromBlankAsync();
+                    // } else if (radioAjax.checked) {
+                        return new Promise(function (resolve, reject) {
+                            var req = new XMLHttpRequest();
+                            // var url = urlInput.value;
+                            var url = fileName;
+                            req.open("GET", url, true);
+                            req.responseType = "arraybuffer";
+                            req.onreadystatechange = function () {
+                                if (req.readyState === 4){
+                                    if (req.status === 200) {
+                                        resolve(XlsxPopulate.fromDataAsync(req.response));
+                                    } else {
+                                        reject("Received a " + req.status + " HTTP code.");
+                                    }
+                                }
+                            };
+                            req.send();
+                        });
+                    // } else if (radioLocal.checked) {
+                    //     var file = fileInput.files[0];
+                    //     if (!file) return Promise.reject("You must select a file.");
+                    //     return XlsxPopulate.fromDataAsync(file);
+                    // }
+                }
+                function generate(type) {
+                    return getWorkbook()
+                        .then(function (workbook) {
+                            // workbook.sheet(0).cell("A1").value("This was created in the browser!").style("fontColor", "ff0000");
+                            workbook._sheetsNode.children.forEach(function (sheet) {
+                                //workbook.sheet(sheet.attributes.name).column("Z").width(100)
+                                workbook.sheet(sheet.attributes.name).cell("A1").value(sheet.attributes.name + " " + new Date())
+                                  .style({
+                                    fontColor: 'FF0000',
+                                    fontSize: 16,
+                                    numberFormat: "dddd, mmmm dd, yyyy"
+                                  })
+                            })
+                            return workbook.outputAsync({ type: type });
+                            
+                        });
+                }
+                function generateBlob() {
+                    return generate()
+                        .then(function (blob) {
+                            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                                window.navigator.msSaveOrOpenBlob(blob, "out.xlsx");
+                            } else {
+                                var url = window.URL.createObjectURL(blob);
+                                var a = document.createElement("a");
+                                document.body.appendChild(a);
+                                a.href = url;
+                                a.download = fileName.split('/').pop();
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                                document.body.removeChild(a);
+                            }
+                        })
+                        .catch(function (err) {
+                            alert(err.message || err);
+                            throw err;
+                        });
+                }
+                generateBlob();
+                
+                
+              }
+            });
+          });
+          
+      	}
       };
       
       const componentAdminUsers = {
@@ -398,7 +551,7 @@
                     <td>{{v.time}}</td>
                     <td>{{v.user}}</td>
                     <td>{{v.doc}}</td>
-                    <td><button class="btn btn-sm btn-danger">Delete</button></td>
+                    <td><button class="btn btn-sm btn-danger" @click="deleteLog">Delete</button></td>
                   </tr>
                   
                 </tbody>
@@ -406,36 +559,30 @@
             </div>
           </div>`,
       	  data() { return { 
-      	    title: 'ggggggggggg' ,
-      	    downloads: []
+      	   // title: 'ggggggggggg' ,
+      	    downloads: [],
       	  } },
           mounted: function () { // https://firebase.google.com/docs/database/web/read-and-write?authuser=0
             var that=this;
             console.log('componentAdminLogs mounted');
             
-            // DOWNLOADS.child('CgTK6pLWp4fuYoifz0eB').once('value').then(function(snapshot) {
-            //   console.log('snapshot.val()',snapshot.val());
-            // });
-            
-            // /// THIS IS DATABASE, not firestore
-            // DOWNLOADS = .ref('downloads');
-            // DOWNLOADS = firebase.database().ref('downloads/CgTK6pLWp4fuYoifz0eB');
+            /// LOAD DL LOGS INTO ARRAY -------------------------------
+            // (this is database, not firestore)
             DOWNLOADS.once('value').then(function(snapshot) {
-              console.log('snapshot.val()', snapshot.val());
+              // console.log('snapshot.val()', snapshot.val());
               Object.keys(snapshot.val()).forEach(function(d,i){
                 var val = snapshot.val()[d];
-                console.log(val)
-                that.downloads.push(val)
+                val.id = d;
+                // console.log(val);
+                that.downloads.push(val);
               })
             });
-            
-            
-            
-            // DOWNLOADS.on('value', function(snapshot) {
-            //     console.log('snapshot')
-            //     console.log(snapshot)
-            //     console.log('snapshot.val()', snapshot.val());
-            //   });
+            // -------------------------------
+          },
+          methods: {
+            deleteLog: function () {
+              console.log('deleteLog')
+            }
           }
       };
       
@@ -470,21 +617,10 @@
       const router = new VueRouter({
         routes // short for `routes: routes`
       })
-
-
-
       
       var app = new Vue({
         router,
         data: {
-          myDocs: [
-            'docs/measles.pdf'
-            ,'docs/rubella.pdf'
-            ,'docs/smallpox.pdf'
-            // ,'https://firebasestorage.googleapis.com/v0/b/saif-pdfs.appspot.com/o/example1.pdf?alt=media&token=0f9bd0bd-78c0-4a70-b078-11a1aef3edd7'
-            // ,'https://firebasestorage.googleapis.com/v0/b/saif-pdfs.appspot.com/o/P%C5%99%C3%ADloha%20%C4%8D%202%20Formul%C3%A1%C5%99%20Troxerutin_R_INS_HPLC_verze_2_636791827515652480.pdf?alt=media&token=f796a8dd-a983-4dc5-a6eb-b351bc7ef11b'
-            // ,'example4.pdf'
-          ]
         }
       }).$mount('#app')
       
@@ -498,69 +634,6 @@
     
     
     
-    
-    <!--pdf-lib-->
-    <script>
-      var PDFDocumentFactory = PDFLib.PDFDocumentFactory;
-      var PDFDocumentWriter = PDFLib.PDFDocumentWriter;
-      var drawText = PDFLib.drawText;
-      
-      
-      
-      // ADD TPDF TIMESTAMP
-      $(document).ready(function(){
-        $("a.doc").click(function(event){
-          event.preventDefault();
-          // console.log(event.target.href);
-          console.log("user clicked doc link");
-          
-          file = event.target.href; // e.g. file = 'docs/example1.pdf';
-          fetch(file) .then(
-            function(response) {
-              console.log('Fetched!');
-              response.arrayBuffer().then(function(buffer) {
-                // console.log(buffer)
-                // console.log(buffer[""[[Uint8Array]]""])
-                const existingPdfDocBytes = new Uint8Array(buffer)
-                const pdfDoc = PDFDocumentFactory.load(existingPdfDocBytes);
-                const [helveticaFont] = pdfDoc.embedStandardFont('Helvetica');
-                
-                const pages = pdfDoc.getPages();
-                const page  = pages[0];
-                
-                page.addFontDictionary('Helvetica', helveticaFont);
-                
-                const contentStream = pdfDoc.createContentStream(
-                  drawText( 'form1 : ' + (new Date()).toISOString().slice(0, 19) , {
-                    x: 200,
-                    y: 800,
-                    size: 16,
-                    font: 'Helvetica',
-                    colorRgb: [0.95, 0.26, 0.21],
-                  })//,
-                );
-                
-                page.addContentStreams(pdfDoc.register(contentStream));
-                const pdfBytes = PDFDocumentWriter.saveToBytes(pdfDoc);
-                
-                // LOG that in firebase
-                DOWNLOADS.push({user: UserEmail, time: (new Date()).toISOString().slice(0, 19).replace('T', ' '), doc: file.split('docs/')[1]})
-                
-                // console.log(pdfBytes)
-                download( pdfBytes, "textUInt8Array.pdf", "text/plain" );
-                // ANALYTICS.child('perPage').child(page).child(login).set(timestamp);
-                
-              });
-            }
-          ).catch(function(err) {
-            console.log('Fetch Error :-S', err);
-          });
-        });
-      });
-      
-    
-    
-    </script>
 
   </body>
 </html>
