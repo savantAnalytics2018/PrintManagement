@@ -127,8 +127,22 @@
                     <span data-feather="home"></span> Project Overview
                   </a>
                   
-                  <span class="text-light float-right" href="#">
-                    <span data-feather="settings"></span>
+                  <span class="text-light float-right" href="#" >
+                    <!--data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."-->
+                    
+                    
+                    
+                    <div class="btn-group dropright">
+                      <div class="dropdown-tog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span data-feather="settings"></span>
+                      </div>
+                      <div class="dropdown-menu dropdown-menu-right">
+                        <button class="dropdown-item" type="button">Project Settings</button>
+                        <button class="dropdown-item" type="button">Another action</button>
+                        <button class="dropdown-item" type="button">Something else here</button>
+                      </div>
+                    </div>
+                    
                   </span>
                   
                 </span>
@@ -137,12 +151,15 @@
             
             
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>User access</span>
+              <span>Documents</span>
             </h6>
             <ul class="nav flex-column">
               
               <li class="nav-item">
-                <router-link class="nav-link activ text-light" to="/documents"><span data-feather="file"></span> Documents</router-link>
+                <router-link class="nav-link activ text-light" to="/documents/QA"><span data-feather="file"></span> QA</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link activ text-light" to="/documents/QC"><span data-feather="file"></span> QC</router-link>
               </li>
               <!--<li class="nav-item">
                 <a class="nav-link" href="#">
@@ -244,6 +261,11 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx-populate@1.17.0/browser/xlsx-populate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
     
+    <script>
+      $(function () {
+        $('[data-toggle="popover"]').popover()
+      })
+    </script>
     
     <!--AUTHENTICATION-------------------------------------------------------->
     <script>
@@ -356,7 +378,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(v,i) in myDocs">
+                  <tr v-for="(v,i) in myDocsFiltered">
                     <!--td>{{i}}</td-->
                     <td><a class="doc" :href="v">{{v}}</a></td>
                   </tr>
@@ -367,9 +389,9 @@
           </div>`,
       	data() { return { 
           myDocs: [
-            'docs/measles.pdf'
-            ,'docs/rubella.pdf'
-            ,'docs/smallpox.pdf'
+            'docs/QC/measles.pdf'
+            ,'docs/QC/rubella.pdf'
+            ,'docs/QC/smallpox.pdf'
             ,'docs/QA/test1.xlsx'
             ,'docs/QA/AcetonForm.xlsx'
             ,'docs/QC/example1.pdf'
@@ -378,6 +400,13 @@
             // ,'example4.pdf'
           ],
         }},
+        computed: {
+          myDocsFiltered: function () {
+            var folder = this.$route.params.folder;
+            // console.log('folder',folder);
+            return this.myDocs.filter(d => d.indexOf(folder)>-1 ) 
+          },
+        },
       	mounted: function(){
       	 // var fontColor = ;
       	  
@@ -620,7 +649,7 @@
       const routes = [
         // { path: '/foo', component: Foo },
         // { path: '/bar', component: Bar },
-        { path: '/documents', alias: 'docs', component: componentDocs },
+        { path: '/documents/:folder', alias: 'docs', component: componentDocs },
         { path: '/admin-logs', alias: 'logs', component: componentAdminLogs },
         { path: '/admin-users', alias: 'users', component: componentAdminUsers },
         { path: '/signin', alias: 'signup', component: componentSignin },
